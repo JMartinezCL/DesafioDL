@@ -4,10 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pycodestyle = "*"
 
 [packages]
-django = "==2.0"
+django = "==2.2"
 requests = "==2.22.0"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"
