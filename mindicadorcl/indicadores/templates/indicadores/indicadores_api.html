@@ -13,7 +13,7 @@
                 <div class="row">
                     <form method="POST">
                         {% csrf_token %}
-                        <div class="col-sm-12 offset-sm-2">                       
+                        <!--<div class="col-sm-12 offset-sm-2">                       
                             <div class="form-group col-md-4">
                                 <label >Seleccione el indicador que desea</label>
                                 <select class="form-control" name="indicador">
@@ -21,7 +21,7 @@
                                     <option value="ipc">Ipc</option>
                                 </select>
                             </div> 
-                        </div>
+                        </div>-->
                         <div class="col-sm-12 offset-sm-2">
                             <div class="form-group">
                                 <label>ingrese el año que desea guardar</label>
@@ -30,7 +30,7 @@
                         </div>   
                         <div class="col-sm-12 offset-sm-2">                           
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary" id="btn_guardar">Guardar</button>
+                                <button type="button" class="btn btn-primary" id="btn_guardar">Guardar</button>
                             </div>
                         </div>
                     </form>
@@ -43,9 +43,9 @@
     </body>
 
  <!-- scripts -->
-<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js"  crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script> -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>-->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
@@ -55,8 +55,7 @@ $("#btn_guardar").on("click",function()
 {
     var formulario = {}
     formulario['year'] = $('input:text[name=year]').val();
-    formulario['indicador']=$('select[name=indicador] option:selected').val();   
-    alert(formulario['indicador'])       		
+    formulario['indicador']=$('select[name=indicador] option:selected').val();
     $.ajax({
         type: 'post',
         url: "{% url 'api_historico' %}",
@@ -66,41 +65,82 @@ $("#btn_guardar").on("click",function()
             'datos' : JSON.stringify(formulario)},
 
         success: function (response){   
-            alert("Informacion historica guardada.")   
-            console.log("hollllllllllllllllllllllaaaaaaaaaaa")             
+            alert("Informacion historica guardada.")  
+            var data = JSON.parse(response)            
+            var decode = Object.entries(data)    
+            drawGraphic(decode[0][1], decode[1][1])                        
             },        
         error: function(response){
-            alert("error")
-            console.log("chaaaaoooooooooooooooo") 
+            alert("Los datos no se pudieron almacenar correctamente.")            
         }
     }); 
 });
 
 </script>
 <script>
+function drawGraphic(uf, ipcs){
+    var labels_ipc = ipcs.map(function(e) {
+            return e.fecha.substr(0,7);
+            });
+    var values_ipc = ipcs.map(function(e) {
+    return e.valor;
+    });    
+    var labels_uf = uf.map(function(e) {
+            return e.fecha.substr(0,7);
+            });
+    var values_uf = uf.map(function(e) {
+    return e.valor;
+    });   
+    
+    labels_ipc.reverse()
+    values_ipc.reverse()
+    labels_uf.reverse()
+    values_uf.reverse()
+    i=0  
+    var ipc_fix =[] //valor de ipc por dia
+    $.each(uf, function(key, value){    
+        if(value.fecha.substr(0,7) == ipcs[i]['fecha'].substr(0,7)){ 
+            ipc_fix.push(ipcs[i]['valor'])            
+        }
+        else{            
+            ipc_fix.push(ipcs[i]['valor'])           
+            i++    
+        }           
+    })
+    
+
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio,',
-                    'Julio','Agosto','Sept','Oct','Nov','Dic'],
+            labels: labels_uf,
             datasets: [{
-                label: '# of Votes',
+                label: 'Uf',
                 fill: false,
-                data: [12, 19, 3, 5, 2, 3,2,5, 2, 3,2,15],               
+                data: values_uf,               
                 borderWidth: 1
-            }]
-        },
+            },
+            {
+                label: 'Ipc',
+                fill: false,
+                data: ipc_fix,               
+                borderWidth: 1
+            }],
+        },        
         options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: false
-                }
-            }]
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        //beginAtZero: false,
+                        callback: function(value, index, values) {
+                        return '$' + value;
+                    }
+                    }
+                }]
+            }
         }
-    }
-});
+    });
+} 
 </script>
     
 </html>
