@@ -100,3 +100,7 @@ def consumoApiIpc(request):
     lista = [{'valor': ipc.valor, 'fecha': ipc.fecha} for ipc in historico]
     response = json.dumps(lista)
     return JsonResponse(json.loads(response), safe=False)
+
+
+def uiUser(request):
+    return render(request, 'indicadores/indicadores_filtro.html', {})

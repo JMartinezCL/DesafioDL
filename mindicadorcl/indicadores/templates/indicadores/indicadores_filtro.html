@@ -1,0 +1,147 @@
+{% extends 'indicadores/base.html' %}
+{% load static %}
+
+{% block content %}
+<!--<form method="POST"> -->
+    {% csrf_token %}                        
+    <div>
+        <div>
+            <label>Indique la fechas que desea graficar.</label>            
+        </div> 
+        <div class="col-sm-10 offset-sm-2 bg-dark border">
+            <div class="form-group">
+                <label>Fecha Inicial</label>
+                <select class="form-control" name="indicador">
+                    <option value="1" selected>Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+                <div>
+                    <label>Año</label>
+                    <input type="text" name="month_ini" required>
+                </div>           
+            </div>
+        </div> 
+        <div class="col-sm-10 offset-sm-2 bg-dark border">
+            <div class="form-group">
+                <label>Fecha Final</label>
+                <select class="form-control" name="indicador">
+                        <option value="1" selected>Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select> 
+                <div>
+                    <label>Año</label>
+                    <input type="text" name="year_end" required>
+                </div>           
+            </div>
+        </div> 
+    <div class="col-sm-12 offset-sm-2">                           
+        <div class="form-group">
+            <button type="button" class="btn btn-primary" id="btn_graph">graficar</button>
+        </div>
+    </div>
+    <div class="col-sm-12 offset-sm-2 bg-dark border">
+            <canvas id="myChart" width="400" height="400"></canvas>
+    </div> 
+<!--</form> -->
+
+{%endblock%}
+{% block scripts%}
+<!-- <script type='text/javascript' src="{% static 'js/consumoApi.js' %}"></script> -->
+<script>
+$("#btn_graph").on("click",function()
+{
+    //getRangeYear   
+    //requestApiUf(2017)//recopila la data
+    getDataResquest(getYearRange(2010,2015))
+    //filtra por meses 
+    
+});
+/***
+ * determina la cantidad de años de los que se pedira la data *
+ ***/
+function getYearRange(inicio, fin){
+    range = fin - inicio
+    var list_range =[]
+    i=0
+    for(inicio; inicio <=fin; inicio++){
+        list_range.push(inicio)        
+    }
+    //console.log(list_range)
+    return list_range
+}
+/***
+ * hace la peticion de data en el rango seleccionado *
+ ***/
+function getDataResquest(yearRange){
+    dateRepositoryUf =[]
+    valueRepositoryUf =[]
+    dateRepositoryIpc =[]
+    valueRepositoryIpc =[]
+
+
+    yearRange.forEach(function(element) {
+        //console.log(element);
+        aux_uf = requestApiUf(element);
+        console.log("xx:",aux_uf)
+        aux_uf.forEach(function(element){
+            console.log("la fecha:")
+        });
+
+    });
+
+}
+/***
+ * Peticion a la api de mindicador.cl/api/*
+ ***/
+function requestApiUf(year){
+    /*$.ajax(
+   {
+      type:'GET',
+      url:'https://mindicador.cl/api/uf/'+ year,
+      
+      success: function(data){        
+        console.log(data)        
+      }
+   });  */
+   var list_date =[]
+   var list_value =[]
+   var current_request=[];
+   $.getJSON('https://mindicador.cl/api/uf/'+year, function(data) {
+    var dailyIndicators = data;
+    current_request.push(data)
+    //console.log(current_request)
+    //console.log(dailyIndicators.serie[0].valor)
+    dailyIndicators.serie.forEach(function(element) {
+        list_date.push(element.fecha.substr(0,10))
+        list_value.push(element.valor)
+        //console.log(element.fecha.substr(0,10))
+    });
+    //list_date.push(dailyIndicators.serie)
+    }).fail(function() {
+        console.log('Error al consumir la API!');
+    }); 
+    return current_request;
+
+}
+</script>
+{% endblock%} 
