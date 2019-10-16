@@ -144,8 +144,7 @@ function getDataResquest(yearRange, month_ini, year_ini,month_end, year_end){
             else if(current_year != year_ini && current_year != year_end){
                 return e.valor;
             }
-            return;
-        //return e.valor;
+            return;        
         });
         value_ipc.reverse();
         value_ipc = value_ipc.filter(function( element ) {return element !== undefined;});
@@ -159,8 +158,7 @@ function getDataResquest(yearRange, month_ini, year_ini,month_end, year_end){
             else if(current_year != year_ini && current_year != year_end){
                 return e.fecha;
             }
-            return;
-        //return e.fecha;
+            return;        
         });
         date_ipc.reverse();
         date_ipc = date_ipc.filter(function( element ) {return element !== undefined;});
