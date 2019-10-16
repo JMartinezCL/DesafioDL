@@ -206,7 +206,7 @@ function requestApi(code,year){
 }
 
 function drawGraphFilter(values_uf, ipc_fix, labels_uf){       
-   $('#myChart').remove(); // this is my <canvas> element
+   $('#myChart').remove();
    $('#graphContainer').append('<canvas id="myChart" width="400" height="400"><canvas>');
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {

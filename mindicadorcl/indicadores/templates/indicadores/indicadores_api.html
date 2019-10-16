@@ -16,7 +16,13 @@
         </div>
     </div>
 </form>
-<div class="col-sm-6 offset-sm-2" style="height: 100px">
+<div class="col-sm-6 offset-sm-2" id="output">
+    <div class="ajaxProgress" style="display:none">        
+        <img src="{% static 'img/loader.gif' %}" alt="loading"> 
+        <h2>cargando... porfavor espere</h2>
+    </div>
+</div>
+<div class="col-sm-6 offset-sm-2" id="graphContainer" style="height: 100px">
     <canvas id="myChart" width="50" height="50"></canvas>
 </div> 
 {% endblock%}

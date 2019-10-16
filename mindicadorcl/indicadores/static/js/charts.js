@@ -1,6 +1,7 @@
 $("#btn_guardar").on("click",function()
 {    
-    var formulario = {}
+    $('.ajaxProgress').show();
+    var formulario = {};
     formulario['year'] = $('input:text[name=year]').val();
     formulario['indicador']=$('select[name=indicador] option:selected').val();
     $.ajax({
@@ -13,9 +14,10 @@ $("#btn_guardar").on("click",function()
 
         success: function (response){   
             alert("Informacion historica guardada.")  
-            var data = JSON.parse(response)            
-            var decode = Object.entries(data)    
-            drawGraphic(decode[0][1], decode[1][1])                        
+            var data = JSON.parse(response);            
+            var decode = Object.entries(data);    
+            drawGraphic(decode[0][1], decode[1][1]);    
+            $('.ajaxProgress').hide();              
             },        
         error: function(response){
             alert("Los datos no se pudieron almacenar correctamente.")            
@@ -54,7 +56,8 @@ function drawGraphic(uf, ipcs){
         }           
     })
     
-
+    $('#myChart').remove();
+    $('#graphContainer').append('<canvas id="myChart" width="400" height="400"><canvas>');
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'line',

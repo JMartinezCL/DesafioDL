@@ -18,10 +18,13 @@
         }
     }); 
 }*/
-
-$.getJSON('https://mindicador.cl/api/2018', function(data) {
+$("#btn_graph").on("click",function()
+{
+    $.getJSON('https://mindicador.cl/api/2018', function(data) {
     var dailyIndicators = data;
     console.log(dailyIndicators.uf.valor)
-}).fail(function() {
-    console.log('Error al consumir la API!');
+    }).fail(function() {
+        console.log('Error al consumir la API!');
+    });
 });
+

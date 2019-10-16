@@ -1,6 +1,5 @@
 $("#btn_guardar").on("click",function()
-{
-    alert("jjajaja")
+{    
     var formulario = {}
     formulario['year'] = $('input:text[name=year]').val();
     formulario['indicador']=$('select[name=indicador] option:selected').val();
@@ -55,7 +54,8 @@ function drawGraphic(uf, ipcs){
         }           
     })
     
-
+    $('#myChart').remove();
+    $('#graphContainer').append('<canvas id="myChart" width="400" height="400"><canvas>');
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'line',
