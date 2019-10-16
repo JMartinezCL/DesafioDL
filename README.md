@@ -1,5 +1,5 @@
 # ConsumoApi 
-_Aplicación creada para interactuar con la API de mindicador.cl
+_Aplicación creada para interactuar con la API de mindicador.cl_
 
 ### Pre-requisitos 📋
 _Se necesitan tener las siguientes herramientas en el entorno local_
@@ -32,7 +32,7 @@ ______________________
 localhost:8000/indicadores/historico/ -> obtiene data anual desde API mindicador.cl
 localhost:8000/indicadores/api/uf/ -> consumo de datos anual de UF
 localhost:8000/indicadores/api/ipc/ -> consumo de datos anual de IPC
-localhost:8000/indicadores/filtro/ -> despliega los datos IPC/UF segun el filtro indicado
+localhost:8000/indicadores/filtros/ -> despliega los datos IPC/UF segun el filtro indicado
 localhost:8000/mapa/ -> mapa(googlemaps API) con grilla que indica los puntos de ubicacion por cada grilla
 
 ```
