@@ -20,6 +20,7 @@ $("#btn_guardar").on("click",function()
             $('.ajaxProgress').hide();              
             },        
         error: function(response){
+            $('.ajaxProgress').hide();  
             alert("Los datos no se pudieron almacenar correctamente.")            
         }
     }); 
@@ -28,13 +29,13 @@ $("#btn_guardar").on("click",function()
 
 function drawGraphic(uf, ipcs){
     var labels_ipc = ipcs.map(function(e) {
-            return e.fecha.substr(0,7);
+            return e.fecha.substr(0,10);
             });
     var values_ipc = ipcs.map(function(e) {
     return e.valor;
     });    
     var labels_uf = uf.map(function(e) {
-            return e.fecha.substr(0,7);
+            return e.fecha.substr(0,10);
             });
     var values_uf = uf.map(function(e) {
     return e.valor;

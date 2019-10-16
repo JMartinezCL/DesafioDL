@@ -36,36 +36,38 @@ def consumoApiHistorico(request):
     for serie in response_json_uf['serie']:
         try:
             uf_object.valor = serie['valor']
-            uf_object.fecha = serie['fecha']
+            uf_object.fecha = serie['fecha'][0:10]
             uf_object.save()
         except IOError as e:
             print("error")
     for serie in response_json_ipc['serie']:
         try:
             ipc_object.valor = serie['valor']
-            ipc_object.fecha = serie['fecha']
+            ipc_object.fecha = serie['fecha'][0:10]
             ipc_object.save()
         except IOError as e:
             print("error")
     historico_ipc = ipc.objects.all()
     historico_uf = uf.objects.all()
-    lista_ipc = [{'valor': ipc.valor, 'fecha': ipc.fecha}
+    lista_ipc = [{'valor': ipc.valor, 'fecha': str(ipc.fecha)}
                  for ipc in historico_ipc]
-    lista_uf = [{'valor': uf.valor, 'fecha': uf.fecha} for uf in historico_uf]
+    lista_uf = [{'valor': uf.valor, 'fecha': str(uf.fecha)}
+                for uf in historico_uf]
     response = json.dumps({'uf': lista_uf, 'ipc': lista_ipc})
     return JsonResponse(response, safe=False)
 
 
 def consumoApiUf(request):
     historico = uf.objects.all()
-    lista = [{'valor': uf.valor, 'fecha': uf.fecha} for uf in historico]
+    lista = [{'valor': uf.valor, 'fecha': str(uf.fecha)} for uf in historico]
     response = json.dumps(lista)
     return JsonResponse(json.loads(response), safe=False)
 
 
 def consumoApiIpc(request):
     historico = ipc.objects.all()
-    lista = [{'valor': ipc.valor, 'fecha': ipc.fecha} for ipc in historico]
+    lista = [{'valor': ipc.valor, 'fecha': str(ipc.fecha)}
+             for ipc in historico]
     response = json.dumps(lista)
     return JsonResponse(json.loads(response), safe=False)
 
