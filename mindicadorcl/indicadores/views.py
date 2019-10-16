@@ -104,3 +104,7 @@ def consumoApiIpc(request):
 
 def uiUser(request):
     return render(request, 'indicadores/indicadores_filtro.html', {})
+
+
+def mapa(request):
+    return render(request, 'indicadores/mapa_grid.html', {})

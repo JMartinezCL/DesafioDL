@@ -8,4 +8,5 @@ urlpatterns = [
     path('indicadores/api/uf/', views.consumoApiUf),
     path('indicadores/api/ipc/', views.consumoApiIpc),
     path('indicadores/filtros/', views.uiUser),
+    path('mapa/', views.mapa),
 ]

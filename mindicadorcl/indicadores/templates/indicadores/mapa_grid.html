@@ -1,0 +1,162 @@
+{% extends 'indicadores/base.html' %}
+{%block content%}
+
+<div class="col-12" id="panel" style="margin-left:220px">Esquina izquierda:
+    <input type="text" readonly id="left">Esquina derecha:
+    <input type="text" readonly id="blw">
+</div>
+<div class="col-12 my-2"id="map"></div>
+<!--<div id="info"></div> -->
+{%endblock%}
+
+{%block scripts%}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjJuxCSNRzDz1aZi9n5vduL55j9jWiVs4&callback=initMap"
+  type="text/javascript"></script>
+<script>
+function initMap(){ 
+  var marker;
+  var grid;
+  function initialize() {
+    latitudInicial = -30.006981782520036;
+    longitudInicial = -71.35192990332035;
+    
+    var mapOptions = {
+        zoom: 11,
+        center: new google.maps.LatLng(-29.914714, -71.227023)
+    };
+  
+    var latLng = new google.maps.LatLng(latitudInicial, longitudInicial);
+    map = new google.maps.Map(document.getElementById('map'),
+        mapOptions);
+
+    marker = new google.maps.Marker({
+        position: latLng,
+        title: 'Point A',
+        map: map,
+        draggable: true
+  });
+
+    marker1 = new google.maps.Marker({
+        position: new google.maps.LatLng(-29.914714, -71.227023),
+        map: map,
+        draggable: true,
+        title: 'marker1'
+    });
+  google.maps.event.addListener(marker1, 'click', function(evt) {
+    //infowindow.setContent(marker1.getPosition().toUrlValue(6));
+    infowindow.open(map, this);
+  });
+  marker2 = new google.maps.Marker({
+    position: new google.maps.LatLng(-29.914862, -71.225049),
+    map: map,
+    draggable: true,
+    title: 'marker2'
+  });
+  google.maps.event.addListener(marker2, 'click', function(evt) {
+    //infowindow.setContent(marker1.getPosition().toUrlValue(6));
+    infowindow.open(map, this);
+  });
+  
+  rectangle = new google.maps.Rectangle({
+    strokeColor: '#EEE7E5',
+    strokeOpacity: 0.8,
+    strokeWeight: 2,
+    fillColor: '#FF0000',
+    fillOpacity: 0.35,
+    clickeable: true,
+    map: map,
+    bounds: new google.maps.LatLngBounds(
+      marker1.getPosition(),
+      marker2.getPosition())
+  });
+  google.maps.event.addListener(marker, 'drag', function(evt) {
+    //console.log(marker.getPosition().toUrlValue(6))
+    //x = makeGrid()
+    console.log("<-->",grid[0][1].getBounds())
+  });
+  
+
+  var leftSideDist = Math.round((marker2.getPosition().lng() - marker1.getPosition().lng()) * 10000) / 100;
+  var belowSideDist = Math.round((marker2.getPosition().lat() - marker1.getPosition().lat()) * 10000) / 100;
+
+  google.maps.event.addListener(marker1, 'dragend', function() {
+    rectangle.setBounds(new google.maps.LatLngBounds(marker1.getPosition(), marker2.getPosition()));
+    leftSideDist = Math.round((marker2.getPosition().lng() - marker1.getPosition().lng()) * 10000) / 100;
+    grid = makeGrid();
+  });
+
+  google.maps.event.addListener(marker2, 'dragend', function() {
+    rectangle.setBounds(new google.maps.LatLngBounds(marker1.getPosition(), marker2.getPosition()));
+    belowSideDist = Math.round((marker2.getPosition().lat() - marker1.getPosition().lat()) * 10000) / 100;
+    grid = makeGrid();
+  });
+  grid = makeGrid();
+  
+}//end initialize
+
+
+/***
+ * Constructor de la grilla*
+ ***/
+var rectangleLat = [];
+var rectangleLng = [];
+function makeGrid() {
+    grid = null;
+    for (x in rectangleLng) {        
+        for (y in rectangleLng[x]) {
+            if (rectangleLng[x][y].setMap) {
+                rectangleLng[x][y].setMap(null)
+                rectangleLng[x][y] = null;                
+            }            
+        }
+    }
+    var leftSideDist = marker2.getPosition().lng() - marker1.getPosition().lng();
+    var belowSideDist = marker2.getPosition().lat() - marker1.getPosition().lat();
+
+    var dividerLat = 6;
+    var dividerLng = 6;
+    var excLat = belowSideDist / dividerLat;
+    var excLng = leftSideDist / dividerLng;
+
+    var m1Lat = marker1.getPosition().lat();
+    var m1Lng = marker1.getPosition().lng();
+    var m2Lat = marker2.getPosition().lat();
+    var m2Lng = marker2.getPosition().lng(); 
+
+    for (var i = 0; i < dividerLat; i++) {
+        if (!rectangleLng[i]) rectangleLng[i] = [];
+        for (var j = 0; j < dividerLng; j++) {
+        if (!rectangleLng[i][j]) rectangleLng[i][j] = {};
+
+        rectangleLng[i][j] = new google.maps.Rectangle({
+            strokeColor: '#FFFFFF',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.1,
+            clickeable: true,
+            map: map,
+            bounds: new google.maps.LatLngBounds(
+            new google.maps.LatLng(m1Lat + (excLat * i), m1Lng + (excLng * j)),
+            new google.maps.LatLng(m1Lat + (excLat * (i + 1)), m1Lng + (excLng * (j + 1))))
+
+        });        
+        google.maps.event.addListener(rectangleLng[i][j], 'click', function(evt) {    
+            alert(this.getBounds())
+            console.log("los puntos:",this.getBounds())
+        });
+        } //for j Lng  
+    } //for i Lat
+
+  document.getElementById('left').value = leftSideDist;
+  document.getElementById('blw').value = belowSideDist;
+  return rectangleLng;
+}//end makegrid
+
+
+google.maps.event.addDomListener(window, 'load', initialize)
+}//end initmap
+
+</script>
+
+{%endblock%}

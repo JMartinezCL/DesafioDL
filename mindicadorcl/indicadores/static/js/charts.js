@@ -1,6 +1,5 @@
 $("#btn_guardar").on("click",function()
-{
-    alert("jjajaja")
+{    
     var formulario = {}
     formulario['year'] = $('input:text[name=year]').val();
     formulario['indicador']=$('select[name=indicador] option:selected').val();
