@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<form method="POST">
+<form method="POST" onsubmit="return false">
     {% csrf_token %}                        
     <div class="col-sm-12 offset-sm-2">
         <div class="form-group">
