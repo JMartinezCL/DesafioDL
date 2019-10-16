@@ -67,13 +67,17 @@ function drawGraphic(uf, ipcs){
                 label: 'Uf',
                 fill: false,
                 data: values_uf,               
-                borderWidth: 1
+                borderWidth: 1,
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgb(75, 192, 192)'
             },
             {
                 label: 'Ipc',
                 fill: false,
                 data: ipc_fix,               
-                borderWidth: 1
+                borderWidth: 1,
+                borderColor: 'rgb(255, 0, 192)',
+                backgroundColor: 'rgb(225, 0, 192)'
             }],
         },        
         options: {
