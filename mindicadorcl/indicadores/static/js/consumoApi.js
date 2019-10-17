@@ -12,85 +12,123 @@ $("#btn_graph").on("click",function()
 /***
  * determina la cantidad de años de los que se pedira la data *
  ***/
-function getYearRange(inicio, fin){
-    range = fin - inicio
+function getYearRange(inicio, fin){   
+
     var list_range =[]
-    i=0
-    for(inicio; inicio <=fin; inicio++){
-        list_range.push(inicio)        
-    }    
-    return list_range
+    if(inicio != fin){
+        for(inicio; inicio <=fin; inicio++){
+            list_range.push(inicio)        
+        }
+    }        
+    else list_range.push(inicio);  
+    return list_range;
+    
 }
 /***
  * hace la peticion de data para el rango seleccionado *
  ***/
 function getDataResquest(yearRange, month_ini, year_ini,month_end, year_end){
-    dateRepositoryUf =[]
-    valueRepositoryUf =[]
-    dateRepositoryIpc =[]
-    valueRepositoryIpc =[]
-    date_uf = []
-    value_uf = []
-    date_ipc = []
-    value_ipc= []
+    var dateRepositoryUf = []
+    var valueRepositoryUf = []    
+    var valueRepositoryIpc = []
+    
 
-    yearRange.forEach(function(element) {        
-        aux_uf = requestApi('uf',element);              
-        aux_ipc = requestApi('ipc',element);        
+    yearRange.forEach(function(element) {               
+        var aux_uf = requestApi('uf',element);              
+        var aux_ipc = requestApi('ipc',element);   
+        //date uf                
         var date_uf = aux_uf['serie'].map(function(e) {            
             var current_month= Number(e.fecha.substring(5,7));
             var current_year = Number(e.fecha.substring(0,4))
-            if((month_ini <= current_month && year_ini == current_year) || (current_month <= month_end && year_end == current_year)){
+            if(year_ini == year_end){
+                if(month_ini <= current_month && current_month <= month_end)
+                    return e.fecha.substr(0,10);
+            }
+            else{
+                if((month_ini <= current_month && year_ini == current_year) || 
+                (current_month <= month_end && year_end == current_year)){
                 return e.fecha.substr(0,10);
             }
             else if(current_year != year_ini && current_year != year_end){
                 return e.fecha.substr(0,10);
-            }
+            }            
             return;
-            });
+            }            
+        });
+
         date_uf.reverse();
         date_uf = date_uf.filter(function( element ) {return element !== undefined;});
+
         //valores uf
         var value_uf = aux_uf['serie'].map(function(e) {            
             var current_month= Number(e.fecha.substring(5,7));
             var current_year = Number(e.fecha.substring(0,4))
-            if((month_ini <= current_month && year_ini == current_year) || (current_month <= month_end && year_end == current_year)){                
-                
-                return e.valor;
+            if(year_ini == year_end){
+                if(month_ini <= current_month && current_month <= month_end)
+                    return e.valor;
             }
-            else if(current_year != year_ini && current_year != year_end){
+            else{
+                if((month_ini <= current_month && year_ini == current_year) || 
+                (current_month <= month_end && year_end == current_year)){ 
+
                 return e.valor;
+                }
+                else if(current_year != year_ini && current_year != year_end){
+                    return e.valor;
+                }            
+                return;
             }
-            return;
-        return e.valor;
+            
         });
+
         value_uf.reverse();
         value_uf = value_uf.filter(function( element ) {return element !== undefined;});
+
         //valores ipc
         var value_ipc = aux_ipc['serie'].map(function(e) {            
             var current_month= Number(e.fecha.substring(5,7));
             var current_year = Number(e.fecha.substring(0,4))
-            if((month_ini <= current_month && year_ini == current_year) || (current_month <= month_end && year_end == current_year) || current_year){
-                return e.valor;
+            if(year_ini == year_end){
+                if(month_ini <= current_month && current_month <= month_end)
+                    return e.valor;
             }
-            else if(current_year != year_ini && current_year != year_end){
+            else{
+                if((month_ini <= current_month && year_ini == current_year) || 
+                (current_month <= month_end && year_end == current_year) || current_year){
+
                 return e.valor;
+                }
+                else if(current_year != year_ini && current_year != year_end){
+                    return e.valor;
+                }            
+                return; 
             }
-            return;        
+                   
         });
+
         value_ipc.reverse();
         value_ipc = value_ipc.filter(function( element ) {return element !== undefined;});
+
         //fechas ipc
         var date_ipc = aux_ipc['serie'].map(function(e) {            
             var current_month= Number(e.fecha.substring(5,7));
             var current_year = Number(e.fecha.substring(0,4))
-            if((month_ini <= current_month && year_ini == current_year) || (current_month <= month_end && year_end == current_year)){                
-                return e.fecha;
+
+            if(year_ini == year_end){
+                if(month_ini <= current_month && current_month <= month_end)
+                    return e.fecha.substr(0,10);
             }
-            else if(current_year != year_ini && current_year != year_end){
+            else{
+                if((month_ini <= current_month && year_ini == current_year) || 
+                (current_month <= month_end && year_end == current_year)){  
+
                 return e.fecha;
-            }
-            return;        
+                }
+                else if(current_year != year_ini && current_year != year_end){
+                    return e.fecha;
+                }            
+                return; 
+            }                   
         });
         date_ipc.reverse();
         date_ipc = date_ipc.filter(function( element ) {return element !== undefined;});
@@ -99,7 +137,7 @@ function getDataResquest(yearRange, month_ini, year_ini,month_end, year_end){
         valueRepositoryUf = valueRepositoryUf.concat(value_uf)        
         
         /*igualad de cantidad de valores para ambos array, asigna ipc diario*/
-        i=0;        
+        var i=0;        
         date_uf.forEach(function(element) { 
             if(date_ipc[i]!=null && element.substr(0,7) == date_ipc[i].substr(0,7)){ 
             valueRepositoryIpc.push(value_ipc[i])            
