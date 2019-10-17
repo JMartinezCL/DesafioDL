@@ -1,6 +1,7 @@
 var map = null;
 var map_rectangles = [];
 
+
 $('#btn_generar').on("click",function(){
     //alert("ya");
     var latitudInicial = parseFloat( $('input:text[name=lat_ini]').val() );
@@ -17,10 +18,10 @@ $('#btn_generar').on("click",function(){
       })
     map_rectangles =[];    
     setRectangles(latitudInicial, longitudInicial, longitudGrilla, tamanio);    
-  });
+});
 
 
-  $('#btn_eliminar').on("click",function(){    
+$('#btn_eliminar').on("click",function(){    
     $('input:text[name=lat_ini]').val("");
     $('input:text[name=long_ini]').val("");
     $('input:text[name=cant_grilla]').val("");
@@ -34,27 +35,43 @@ $('#btn_generar').on("click",function(){
         }        
       })
     map_rectangles =[];   
-  });
+});
 
-  function initMap() {
+
+function initMap() {
 
     function initialize() {
 
-      var mapOptions = {
-        zoom: 11,
-        center: new google.maps.LatLng(-29.914714, -71.227023)
-      };
+        var mapOptions = {
+            zoom: 11,
+            center: new google.maps.LatLng(-30.000, -71.350)
+        };
 
-      var latLng = new google.maps.LatLng(-30.000, -71.350);
-      map = new google.maps.Map(document.getElementById('map'),
-        mapOptions);
+        var latLng = new google.maps.LatLng(-30.000, -71.350);
+        map = new google.maps.Map(document.getElementById('map'),
+            mapOptions);
+    
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(-30.000, -71.350),
+            map: map,
+            draggable: true,
+            title: 'marker'
+        });
+        google.maps.event.addListener(marker, 'drag', function(evt) {
+            let lat = marker.getPosition().lat();
+            let lng = marker.getPosition().lng();     
+            $('input:text[name=lat_ini]').val(lat);
+            $('input:text[name=long_ini]').val(lng);                
+        });
       
     }//end initialize
 
+    
+
     google.maps.event.addDomListener(window, 'load', initialize)
-  }//end initmap
+}//end initmap
   
-  function setRectangles(latitudInicial, longitudInicial, longitudGrilla, tamanio) {   
+function setRectangles(latitudInicial, longitudInicial, longitudGrilla, tamanio) {   
 
     let traslacion_x = 0
     let translacion_y = 0
@@ -95,4 +112,4 @@ $('#btn_generar').on("click",function(){
         });
       }
     }
-  }
+}
