@@ -7,7 +7,7 @@ verify_ssl = true
 pycodestyle = "*"
 
 [packages]
-django = "==2.2"
+django = "==2.2.18"
 requests = "==2.22.0"
 psycopg2 = "*"
 
